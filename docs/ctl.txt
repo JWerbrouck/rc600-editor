@@ -1,0 +1,971 @@
+Value
+
+7 OFF
+
+---
+
+7 TRK1­6 REC/PLAY1
+
+PUSH
+
+REC/PLAY
+
+7 TRK1­6 REC/PLAY2
+
+PUSH
+
+REC/PLAY
+
+HOLD
+
+UNDO (PLAY)
+
+7 TRK1­6 REC/PLAY3
+
+PUSH
+
+REC/PLAY
+
+HOLD
+
+UNDO (PLAY)
+
+CLICK
+
+STOP
+
+7 TRK1­6 REC/PLAY4
+
+PUSH
+
+REC/PLAY
+
+HOLD
+
+UNDO, CLEAR
+
+CLICK
+
+STOP
+
+7 TRK1­6 MOMENT PLAY
+
+PUSH
+
+PLAY
+
+7 TRK1­6 PLAY/STOP1
+
+PUSH
+
+PLAY/STOP
+
+7 TRK1­6 PLAY/STOP2
+
+PUSH
+
+PLAY/STOP
+
+HOLD
+
+UNDO (PLAY)
+
+7 TRK1­6 PLAY/STOP3
+
+PUSH
+
+PLAY/STOP
+
+HOLD
+
+UNDO, CLEAR
+
+7 TRK1­6 STOP1
+
+PUSH
+
+STOP
+
+7 TRK1­6 STOP2
+
+PUSH
+
+STOP
+
+CLICK
+
+TAP TEMPO
+
+7 TRK1­6 STOP3
+
+PUSH
+
+STOP
+
+HOLD
+
+CLEAR
+
+CLICK
+
+TAP TEMPO
+
+7 TRK1­6 STOP4
+
+PUSH
+
+STOP
+
+HOLD
+
+CLEAR
+
+7 TRK1­6 STOP5
+
+PUSH
+
+STOP
+
+CLICK
+
+CLEAR
+
+7 TRK1­6 CLEAR
+
+PUSH
+
+CLEAR
+
+7 TRK1­6 REVERSE
+
+PUSH
+
+REVERSE
+
+7 TRK1­6 UNDO/REDO
+
+PUSH
+
+UNDO
+
+System Settings (MENU)
+Explanation
+No function is assigned.
+Switch between record/play/overdubbing for the specified track.
+Switch between record/play/overdubbing for the specified track. The specified track, long press the switch during playback or overdubbing to Undo, and long press the switch once again to Redo.
+Switch between record/play/overdubbing for the specified track. The specified track, long press the switch during playback or overdubbing to Undo, and long press the switch once again to Redo. Stop record/play for the specified track.
+Switch between record/play/overdubbing for the specified track. The specified track, long press the switch during recording or playback to Undo, and long press the switch once again to Redo. Long press the switch during stopped, the track is cleared. Stop record/play for the specified track.
+The currently selected track plays back as long as you hold down the switch.
+Switch between play/stop for the specified track.
+Switch between play/stop for the specified track. The specified track, long press the switch during playback or overdubbing to Undo, and long press the switch once again to Redo.
+Switch between play/stop for the specified track. The specified track, long press the switch during recording or playback to Undo, and long press the switch once again to Redo. Long press the switch during stopped, the track is cleared.
+Stop record/play for the specified track.
+Stop record/play for the specified track. Sets the tempo using tap tempo. Long-press the switch to return to the previous tempo.
+Stop record/play for the specified track. Clear the specified track. Sets the tempo using tap tempo. Long-press the switch to return to the previous tempo.
+Stop record/play for the specified track. Clear the specified track.
+Stop record/play for the specified track. Clear the specified track.
+Clear the specified track.
+Turn reverse play on/off for the specified track.
+Undo/redo recording or the most recent overdubbing for the specified track.
+15
+
+System Settings (MENU)
+
+Value 7 TRK1­6 MARK BACK1
+
+PUSH
+
+MARK BACK (p. 14)
+
+7 TRK1­6 MARK BACK2
+
+PUSH
+
+MARK BACK
+
+HOLD
+
+REC BACK
+
+7 TRK1­6 REC BACK
+
+PUSH
+
+REC BACK
+
+7 TRK1­6 MARK SET1
+
+PUSH
+
+MARK SET (p. 14)
+
+7 TRK1­6 MARK SET2
+
+PUSH
+
+MARK SET
+
+HOLD
+
+MARK CLEAR (p. 14)
+
+7 TRK1­6 MARK CLEAR
+
+PUSH
+
+MARK CLEAR
+
+7 TRK1­6 HALF SPEED
+
+PUSH
+
+HALF SPEED
+
+7 TRK1­6 HALF SPEED (MOMENT)
+
+PUSH
+
+HALF SPEED
+
+7 TRK1­6 DOUBLE SPEED
+
+PUSH
+
+DOUBLE SPEED
+
+7 TRK1­6 DOUBLE SPEED (MOMENT)
+
+PUSH
+
+DOUBLE SPEED
+
+7 TRK1­6 TRACK EDIT
+
+PUSH
+
+TRACK EDIT
+
+7 TRK1­6 TRACK FX
+
+PUSH
+
+FX ON/OFF
+
+7 CUR.TRK REC/PLAY1
+
+PUSH
+
+REC/PLAY
+
+7 CUR.TRK REC/PLAY2
+
+PUSH
+
+REC/PLAY
+
+HOLD
+
+UNDO (PLAY)
+
+7 CUR.TRK REC/PLAY3
+
+PUSH
+
+REC/PLAY
+
+HOLD
+
+UNDO (PLAY)
+
+CLICK
+
+STOP
+
+7 CUR.TRK REC/PLAY4
+
+PUSH
+
+REC/PLAY
+
+HOLD
+
+UNDO, CLEAR
+
+CLICK
+
+STOP
+
+7 CUR.TRK MOMENT PLAY
+
+PUSH
+
+PLAY
+
+7 CUR.TRK PLAY/STOP1
+
+PUSH
+
+PLAY/STOP
+
+7 CUR.TRK PLAY/STOP2
+
+PUSH
+
+PLAY/STOP
+
+HOLD
+
+UNDO (PLAY)
+
+Explanation
+Switches to the recording state set by the mark for the specified track. If a mark has not been set, the track switches to the post-recording state.
+Switches to the recording state set by the mark for the specified track. If a mark has not been set, the track switches to the post-recording state. Restores the specified track to how it was right after recording.
+Restores the specified track to how it was right after recording.
+Sets a mark at the overdubbing state for the specified track.
+Sets a mark at the overdubbing state for the specified track. Deletes the mark that was set for the specified track.
+Deletes the mark that was set for the specified track.
+Sets the playback speed to 1/2 for the specified track.
+The specified track plays back at half speed while you press the switch.
+Sets the playback speed to 2x for the specified track.
+The specified track plays back at double speed while you press the switch.
+Shows the TRACK screen for the specified track.
+Turn the track FX on/off for the specified track.
+Switch between record/play/overdubbing for the currently selected track.
+Switch between record/play/overdubbing for the currently selected track. The specified track, long press the switch during playback or overdubbing to Undo, and long press the switch once again to Redo.
+Switch between record/play/overdubbing for the currently selected track. The specified track, long press the switch during playback or overdubbing to Undo, and long press the switch once again to Redo. Stop record/play for the currently selected track.
+Switch between record/play/overdubbing for the currently selected track. The specified track, long press the switch during recording or playback to Undo, and long press the switch once again to Redo. Long press the switch during stopped, the track is cleared. Stop record/play for the currently selected track.
+The currently selected track plays back as long as you hold down the switch.
+Switch between play/stop for the currently selected track.
+Switch between play/stop for the currently selected track. The specified track, long press the switch during playback or overdubbing to Undo, and long press the switch once again to Redo.
+
+16
+
+System Settings (MENU)
+
+Value
+
+Explanation
+
+7 CUR.TRK PLAY/STOP3
+
+PUSH
+
+PLAY/STOP
+
+Switch between play/stop for the currently selected track.
+
+HOLD
+
+UNDO, CLEAR
+
+The currently selected track, long press the switch during recording or playback to Undo, and long press the switch once again to Redo. Long press the switch during stopped, the track is cleared.
+
+7 CUR.TRK STOP1
+
+PUSH
+
+STOP
+
+Stop record/play for the currently selected track.
+
+7 CUR.TRK STOP2
+
+PUSH
+
+STOP
+
+Stop record/play for the currently selected track.
+
+CLICK
+
+TAP TEMPO
+
+Sets the tempo using tap tempo. Long-press the switch to return to the previous tempo.
+
+7 CUR.TRK STOP3
+
+PUSH
+
+STOP
+
+Stop record/play for the currently selected track.
+
+HOLD
+
+CLEAR
+
+Clear the currently selected track.
+
+CLICK
+
+TAP TEMPO
+
+Sets the tempo using tap tempo. Long-press the switch to return to the previous tempo.
+
+7 CUR.TRK STOP4
+
+PUSH
+
+STOP
+
+Stop record/play for the currently selected track.
+
+HOLD
+
+CLEAR
+
+Clear the specified track.
+
+7 CUR.TRK STOP5
+
+PUSH
+
+STOP
+
+Stop record/play for the currently selected track.
+
+CLICK
+
+CLEAR
+
+Clear the currently selected track.
+
+7 CUR.TRK CLEAR
+
+PUSH
+
+CLEAR
+
+Clear the currently selected track.
+
+7 CUR.TRK REVERSE
+
+PUSH
+
+REVERSE
+
+Turn reverse play on/off for the currently selected track.
+
+7 CUR.TRK UNDO/REDO
+
+PUSH
+
+UNDO
+
+Undo/redo recording or the most recent overdubbing for the currently selected track.
+
+7 CUR.TRK MARK BACK1
+
+PUSH
+
+MARK BACK (p. 14)
+
+Switches to the recording state set by the mark for the currently selected track. If a mark has not been set, the track switches to the post-recording state.
+
+7 CUR.TRK MARK BACK2
+
+PUSH
+
+MARK BACK
+
+Switches to the recording state set by the mark for the currently selected track. If a mark has not been set, the track switches to the post-recording state.
+
+HOLD
+
+REC BACK
+
+Restores the currently selected track to how it was right after recording.
+
+7 CUR.TRK REC BACK
+
+PUSH
+
+REC BACK
+
+Restores the currently selected track to how it was right after recording.
+
+7 CUR.TRK MARK SET1
+
+PUSH
+
+MARK SET (p. 14)
+
+Sets a mark at the overdubbing state for the currently selected track.
+
+7 CUR.TRK MARK SET2
+
+PUSH
+
+MARK SET
+
+Sets a mark at the overdubbing state for the currently selected track.
+
+HOLD
+
+MARK CLEAR (p. 14) Deletes the mark that was set for the currently selected track.
+
+7 CUR.TRK MARK CLEAR
+
+PUSH
+
+MARK CLEAR
+
+Deletes the mark that was set for the currently selected track.
+
+7 CUR.TRK HALF SPEED
+
+PUSH
+
+HALF SPEED
+
+Sets the playback speed to 1/2 for the currently selected track.
+
+7 CUR.TRK HALF SPEED (MOMENT)
+
+PUSH
+
+HALF SPEED
+
+The currently selected track plays back at half speed while you press the switch.
+
+7 CUR.TRK DOUBLE SPEED
+
+PUSH
+
+DOUBLE SPEED
+
+Sets the playback speed to 2x for currently selected track.
+
+7 CUR.TRK DOUBLE SPEED (MOMENT)
+
+PUSH
+
+DOUBLE SPEED
+
+The currently selected track plays back at double speed while you press the switch.
+
+7 CUR.TRK TRACK EDIT
+
+PUSH
+
+TRACK EDIT
+
+Shows the TRACK screen for the currently selected track.
+
+17
+
+System Settings (MENU)
+
+Value
+
+7 CUR.TRK TRACK FX
+
+PUSH
+
+FX ON/OFF
+
+7 CUR.TRK INC
+
+PUSH INC
+HOLD
+
+7 CUR.TRK DEC
+
+PUSH
+
+DEC
+
+HOLD
+
+INC
+
+7 CUR.TRK NUM
+
+PUSH
+
+---
+
+7 ALL START/STOP1
+
+PUSH
+
+ALL START/STOP
+
+7 ALL START/STOP2
+
+PUSH
+
+ALL START/STOP
+
+HOLD
+
+ALL CLEAR
+
+7 ALL START/STOP3
+
+PUSH
+
+ALL START/STOP
+
+CLICK
+
+ALL CLEAR
+
+7 ALL START/STOP4
+
+PUSH
+
+IMM ALL ST/STOP
+
+7 ALL START/STOP5
+
+PUSH
+
+IMM ALL ST/STOP
+
+HOLD
+
+ALL CLEAR
+
+7 ALL START/STOP6
+
+PUSH
+
+IMM ALL ST/STOP
+
+CLICK 7 ALL CLEAR1
+PUSH 7 ALL CLEAR2
+HOLD 7 TAP TEMPO
+
+ALL CLEAR ALL CLEAR ALL CLEAR
+
+PUSH
+
+TAP TEMPO
+
+HOLD
+
+TEMPO REVERT
+
+7 TEMPO UP
+
+PUSH
+
+TEMPO DOUBLE
+
+7 TEMPO DOWN
+
+PUSH
+
+TEMPO HALF
+
+7 PEDAL MODE
+
+PUSH
+
+MODE1<­>MODE2
+
+HOLD
+
+MODE3
+
+18
+
+Explanation
+Turn the track FX on/off for the currently selected track.
+Switch the current track in the order of 1020...50....
+Switch the current track in the order of 5040...10.... Switch the current track in the order of 1020...50....
+Sets the current track.
+Makes all tracks start (play back) at the same time. If you press the switch when the tracks are currently playing back or recording, all tracks stop. * If START MODE/STOP MODE (p. 2) is set to "FADE", playback starts or stops after the fade-in or
+fade-out.
+Makes all tracks start (play back) at the same time. If you press the switch when the tracks are currently playing back or recording, all tracks stop. * If START MODE/STOP MODE (p. 2) is set to "FADE", playback starts or stops after the fade-in or
+fade-out. Clears all tracks.
+Makes all tracks start (play back) at the same time. If you press the switch when the tracks are currently playing back or recording, all tracks stop. * If START MODE/STOP MODE (p. 2) is set to "FADE", playback starts or stops after the fade-in or
+fade-out. Clears all tracks.
+Makes all tracks start (play back) at the same time. If you press the switch when the tracks are currently playing back or recording, all tracks stop. * Even if START MODE/STOP MODE (p. 2) is set to "FADE", playback starts/stops immediately.
+Makes all tracks start (play back) at the same time. If you press the switch when the tracks are currently playing back or recording, all tracks stop. * Even if START MODE/STOP MODE (p. 2) is set to "FADE", playback starts/stops immediately. Clears all tracks.
+Makes all tracks start (play back) at the same time. If you press the switch when the tracks are currently playing back or recording, all tracks stop. * Even if START MODE/STOP MODE (p. 2) is set to "FADE", playback starts/stops immediately. Clears all tracks.
+Clears all tracks.
+Clears all tracks.
+Sets the tempo using tap tempo. Long-press the switch to return to the previous tempo. Returns the tempo to its previous value before editing.
+Doubles the tempo.
+Slows the tempo down to 1/2.
+Switches between pedal mode 1 and 2. Switches to pedal mode 3.
+
+Value
+
+7 PEDAL MODE INC
+
+PUSH
+
+MODE1­>2­>3
+
+7 INPUT FX
+
+PUSH
+
+FX ON/OFF
+
+7 INPUT FX A­D
+
+PUSH
+
+FX ON/OFF
+
+7 INPUT FX CUR
+
+PUSH
+
+FX ON/OFF
+
+7 TRACK FX
+
+PUSH
+
+FX ON/OFF
+
+7 TRACK FX A­D
+
+PUSH
+
+FX ON/OFF
+
+7 TRACK FX CUR
+
+PUSH
+
+FX ON/OFF
+
+7 RHYTHM START/STOP
+
+PUSH
+
+RHY START/STOP
+
+7 RHYTHM START
+
+PUSH
+
+RHYTHM START
+
+7 RHYTHM STOP
+
+PUSH
+
+RHYTHM STOP
+
+7 MEMORY INC1
+
+PUSH INC
+HOLD
+
+7 MEMORY INC2
+
+PUSH
+
+INC
+
+HOLD
+
+DEC
+
+7 MEMORY DEC1
+
+PUSH DEC
+HOLD
+
+7 MEMORY DEC2
+
+PUSH
+
+DEC
+
+HOLD
+
+INC
+
+7 MEMORY WRITE
+
+PUSH
+
+WRITE
+
+7 MIC IN MUTE
+
+PUSH
+
+MUTE ON/OFF
+
+7 MIC1 IN MUTE
+
+PUSH
+
+MUTE ON/OFF
+
+7 MIC2 IN MUTE
+
+PUSH
+
+MUTE ON/OFF
+
+7 LED
+
+PUSH
+
+TOGGLE COLOR
+
+Explanation Switch the pedal mode in the order of 102030.... Turn the input FX on/off. Turn the input FX A­D on/off for the currently selected FX bank. Turn the input FX on/off for the currently selected. Turn the track FX on/off. Turn the track FX A­D on/off for the currently selected FX bank. Turn the track FX on/off for the currently selected. Switch the rhythm between start/stop. Start playing the rhythm. Stop playing the rhythm.
+Switch the memory in the order of 010020...990....
+Switch the memory in the order of 010020...990.... Switch the memory in the order of 990980...010....
+Switch the memory in the order of 990980...010....
+Switch the memory in the order of 990980...010.... Switch the memory in the order of 010020...990.... Writes the settings in the currently selected memory. Mute the audio from the MIC 1, 2 connectors. Mute the audio from the MIC 1 connector. Mute the audio from the MIC 2 connector. Switches the indicator's color (when lit) to the color that was set.
+
+System Settings (MENU)
+
+19
+
+System Settings (MENU)
+CTL/EXP
+9 CTL1­4
+
+Value
+
+7 OFF
+
+---
+
+7 TRK1­6 REC/PLAY1
+
+PUSH
+
+REC/PLAY
+
+7 TRK1­6 REC/PLAY2
+
+PUSH
+
+REC/PLAY
+
+HOLD
+
+UNDO (PLAY)
+
+7 TRK1­6 REC/PLAY3
+
+PUSH
+
+REC/PLAY
+
+HOLD
+
+UNDO (PLAY)
+
+CLICK
+
+STOP
+
+7 TRK1­6 REC/PLAY4
+
+PUSH
+
+REC/PLAY
+
+HOLD
+
+UNDO, CLEAR
+
+CLICK
+
+STOP
+
+7 TRK1­6 MOMENT PLAY
+
+PUSH
+
+PLAY
+
+7 TRK1­6 PLAY/STOP1
+
+PUSH
+
+PLAY/STOP
+
+7 TRK1­6 PLAY/STOP2
+
+PUSH
+
+PLAY/STOP
+
+HOLD
+
+UNDO (PLAY)
+
+7 TRK1­6 PLAY/STOP3
+
+PUSH
+
+PLAY/STOP
+
+HOLD
+
+UNDO, CLEAR
+
+7 TRK1­6 STOP1
+
+PUSH
+
+STOP
+
+7 TRK1­6 STOP2
+
+PUSH
+
+STOP
+
+CLICK
+
+TAP TEMPO
+
+7 TRK1­6 STOP3
+
+PUSH
+
+STOP
+
+HOLD
+
+CLEAR
+
+CLICK
+
+TAP TEMPO
+
+7 TRK1­6 STOP4
+
+PUSH
+
+STOP
+
+HOLD
+
+CLEAR
+
+20
+
+Specify the functions of the footswitch connected to the CTL 1, 2/EXP 1 jack or the CTL 3, 4/EXP 2 jack. PUSH: Functions when the switch is pressed HOLD: Functions when the switch is held down CLICK: Functions when the switch is double-clicked
+Explanation
+No function is assigned.
+Switch between record/play/overdubbing for the specified track.
+Switch between record/play/overdubbing for the specified track. The specified track, long press the switch during playback or overdubbing to Undo, and long press the switch once again to Redo.
+Switch between record/play/overdubbing for the specified track. The specified track, long press the switch during playback or overdubbing to Undo, and long press the switch once again to Redo. Stop record/play for the specified track.
+Switch between record/play/overdubbing for the specified track. The specified track, long press the switch during recording or playback to Undo, and long press the switch once again to Redo. Long press the switch during stopped, the track is cleared. Stop record/play for the specified track.
+The currently selected track plays back as long as you hold down the switch.
+Switch between play/stop for the specified track.
+Switch between play/stop for the specified track. The specified track, long press the switch during playback or overdubbing to Undo, and long press the switch once again to Redo.
+Switch between play/stop for the specified track. The specified track, long press the switch during recording or playback to Undo, and long press the switch once again to Redo. Long press the switch during stopped, the track is cleared.
+Stop record/play for the specified track.
+Stop record/play for the specified track. Sets the tempo using tap tempo. Long-press the switch to return to the previous tempo.
+Stop record/play for the specified track. Clear the specified track. Sets the tempo using tap tempo. Long-press the switch to return to the previous tempo.
+Stop record/play for the specified track. Clear the specified track.
+
+

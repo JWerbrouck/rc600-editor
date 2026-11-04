@@ -1,0 +1,11 @@
+node_modules/
+dist/
+
+# Personal pedal data and test backups stay local
+DATA/
+sandbox/
+tests/
+
+# BOSS documentation is copyrighted; download it locally (see FORMAT.md)
+docs/*.pdf
+docs/guide.txt

@@ -1,0 +1,1199 @@
+/* Calm by design: neutral panel greys, one steel-blue accent for actions and recorded
+   audio, and amber only for "changed but not written yet". */
+
+:root {
+  --bg: #e7eaec;
+  --surface: #f6f7f8;
+  --ink: #1d2329;
+  --muted: #5d6771;
+  --line: #ccd2d7;
+  --accent: #2c6a8a;
+  --accent-soft: #d6e5ee;
+  --changed: #a96400;
+  --changed-soft: #f6e7cf;
+  --error: #a3322a;
+  --radius: 6px;
+  --font: "Atkinson Hyperlegible", system-ui, sans-serif;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b2026;
+    --surface: #232930;
+    --ink: #e3e7ea;
+    --muted: #97a1ab;
+    --line: #363e47;
+    --accent: #7fb4d0;
+    --accent-soft: #24394a;
+    --changed: #e0a54a;
+    --changed-soft: #3a2f1e;
+    --error: #ef8a80;
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.45 var(--font);
+  font-variant-numeric: tabular-nums;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* ---------------------------------------------------------------- buttons and fields */
+
+button {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+}
+button:hover:not(:disabled) {
+  border-color: var(--muted);
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--surface);
+  font-weight: 700;
+}
+button.quiet {
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+button.quiet:hover {
+  color: var(--ink);
+}
+
+select,
+input[type="number"],
+input:not([type]) {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.25rem 0.4rem;
+  min-width: 0;
+}
+input[type="number"] {
+  width: 5.5rem;
+}
+
+.changed,
+select.changed,
+input.changed {
+  border-color: var(--changed);
+  background: var(--changed-soft);
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* ---------------------------------------------------------------- welcome */
+
+.welcome {
+  max-width: 36rem;
+  margin: 6vh auto;
+  padding: 0 1rem;
+}
+.welcome h2 {
+  font-size: 1.8rem;
+  line-height: 1.1;
+  margin: 0 0 0.75rem;
+}
+.welcome .steps {
+  padding-left: 1.25rem;
+  margin: 1.5rem 0;
+}
+.welcome .steps li {
+  margin: 0.4rem 0;
+}
+.welcome .actions {
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+.loading {
+  color: var(--muted);
+}
+
+.fineprint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  max-width: 70ch;
+}
+
+.message.error {
+  color: var(--error);
+}
+
+/* ---------------------------------------------------------------- shell */
+
+.shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  flex-wrap: wrap;
+  padding: 0.6rem 2rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+.topbar h1 {
+  font-size: 1.05rem;
+  margin: 0;
+}
+.picker {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.picker select {
+  font-size: 1rem;
+  padding: 0.35rem 0.5rem;
+  min-width: 18rem;
+  max-width: 60vw;
+}
+.step {
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0.3rem 0.65rem;
+}
+.source {
+  margin: 0 0 0 auto;
+  color: var(--muted);
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 20rem;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 1fr 18rem;
+  min-height: 0;
+}
+.editor {
+  overflow-y: auto;
+  padding: 1.25rem 2rem 2rem;
+  min-width: 0;
+}
+
+/* explanation of the setting under the pointer, or the one clicked */
+.infopane {
+  border-left: 1px solid var(--line);
+  background: var(--surface);
+  padding: 1.25rem 1.25rem;
+  overflow-y: auto;
+}
+.infopane h2 {
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem;
+}
+.infopane p {
+  margin: 0 0 0.75rem;
+  max-width: 60ch;
+}
+.infopane .placeholder {
+  color: var(--muted);
+}
+.infopane button.quiet {
+  padding-left: 0;
+}
+
+/* view switch and segmented controls */
+.views,
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.views button,
+.segmented button {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.35rem 0.9rem;
+}
+.views button + button,
+.segmented button + button {
+  border-left: 1px solid var(--line);
+}
+.views button[aria-pressed="true"],
+.segmented button[aria-pressed="true"] {
+  background: var(--accent-soft);
+  font-weight: 700;
+}
+
+/* footswitch board, laid out like the RC-600: 7–9 on top at the right, 1–6 below */
+.pedalhead {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.pedalhead h2 {
+  font-size: 1.6rem;
+  margin: 0;
+}
+.note {
+  color: var(--muted);
+  font-size: 0.9rem;
+  max-width: 75ch;
+}
+.modes {
+  margin: 0.5rem 0 1rem;
+}
+.board {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 62rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.board-top,
+.board-bottom {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.75rem;
+}
+.board-top .pedal-7 {
+  grid-column: 4;
+}
+.pedal {
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+  min-height: 6.5rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+.pedalnum {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--muted);
+}
+.pedalfn {
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+.pedal.unconfirmed .pedalfn {
+  font-style: italic;
+  color: var(--muted);
+}
+.external {
+  margin-top: 1.5rem;
+  max-width: 30rem;
+}
+.external h3 {
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem;
+}
+.external .row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.2rem 0;
+}
+.external dl,
+.external dd {
+  margin: 0;
+}
+
+/* system overview */
+.sysgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 0.75rem;
+  align-items: start;
+}
+.sysgrid summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.rawvalues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0.5rem 0 0;
+}
+
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 2rem;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+.status {
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- memory header */
+
+.memhead {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.bignum {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--muted);
+}
+.namefield input {
+  font-size: 2rem;
+  font-weight: 700;
+  width: 13ch;
+  padding: 0.1rem 0.4rem;
+  border-color: transparent;
+  background: transparent;
+}
+.namefield input:hover,
+.namefield input:focus {
+  border-color: var(--line);
+  background: var(--surface);
+}
+.namefield.changed {
+  background: transparent;
+}
+.namefield.changed input {
+  border-color: var(--changed);
+  background: var(--changed-soft);
+}
+.headactions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.basics {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.75rem;
+  margin: 1rem 0 1.5rem;
+}
+.basics label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0.35rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+}
+.basics label > span:first-child {
+  color: var(--muted);
+}
+.basics .unit {
+  color: var(--muted);
+}
+.basics .note {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0;
+  flex-basis: 24rem;
+}
+
+/* ---------------------------------------------------------------- track strips */
+
+.tracks {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.tracks table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 52rem;
+  table-layout: fixed;
+}
+.tracks thead th:first-child {
+  width: 12rem;
+}
+.tracks th,
+.tracks td {
+  padding: 0.3rem 0.5rem;
+  text-align: left;
+}
+.tracks thead th {
+  vertical-align: bottom;
+  padding-top: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+.tracks tbody th {
+  font-weight: 400;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.tracks tbody tr + tr > * {
+  border-top: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+}
+.tracks td + td,
+.tracks th + td,
+.tracks thead th + th {
+  border-left: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+}
+.tracknum {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.trackstate {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+.trackstate.has-audio {
+  color: var(--accent);
+  font-weight: 700;
+}
+.tracks select {
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------- groups */
+
+.groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.group {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+}
+.group h2 {
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem;
+}
+.group dl {
+  margin: 0;
+}
+.group .row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+.group dt {
+  color: var(--muted);
+}
+.group dd {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+.group select {
+  max-width: 10rem;
+}
+.hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.chips {
+  display: inline-flex;
+  gap: 3px;
+  padding: 2px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+}
+.chip {
+  padding: 0.1rem 0.45rem;
+  min-width: 1.9rem;
+  font-size: 0.85rem;
+}
+.chip.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--surface);
+}
+
+/* inputs, laid out like the pedal's jacks: label + L/R pair per row */
+.chipgrid {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 3px 0.4rem;
+  padding: 2px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+}
+.chiplabel {
+  color: var(--muted);
+  white-space: nowrap;
+}
+.chipgrid .chip {
+  min-width: 1.7rem;
+  padding: 0.05rem 0.35rem;
+}
+
+/* info buttons; their text shows in the info pane */
+.info {
+  display: inline-grid;
+  place-items: center;
+  width: 1.05rem;
+  height: 1.05rem;
+  padding: 0;
+  margin-left: 0.15rem;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-style: normal;
+  color: var(--muted);
+  vertical-align: 0.1em;
+}
+.info:hover,
+.info.active {
+  color: var(--surface);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.info.static {
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+
+/* settings whose meaning isn't confirmed yet: visible, not editable */
+.unconfirmed > th,
+.unconfirmed > dt {
+  font-style: italic;
+}
+.raw {
+  color: var(--muted);
+  padding: 0.25rem 0.4rem;
+}
+.qmark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.05rem;
+  height: 1.05rem;
+  border: 1px dashed var(--muted);
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-style: normal;
+  color: var(--muted);
+  cursor: help;
+}
+
+/* ---------------------------------------------------------------- dialogs */
+
+dialog {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 1.25rem 1.5rem;
+  width: min(34rem, calc(100vw - 2rem));
+}
+dialog::backdrop {
+  background: rgb(20 25 30 / 0.4);
+}
+dialog h2 {
+  font-size: 1.2rem;
+  margin: 0 0 1rem;
+}
+dialog fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+dialog legend {
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+dialog fieldset label {
+  display: block;
+  padding: 0.15rem 0;
+}
+.targets {
+  display: grid;
+  gap: 0.35rem;
+}
+.targets span {
+  color: var(--muted);
+}
+.quickpick {
+  margin: 0.35rem 0 0;
+}
+.quickpick button {
+  padding-left: 0;
+}
+.preview {
+  min-height: 1.4em;
+  color: var(--muted);
+}
+.changelist {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-left: 1.25rem;
+}
+.changelist ul {
+  padding-left: 1rem;
+  color: var(--muted);
+  margin: 0.15rem 0 0.6rem;
+}
+
+/* ---------------------------------------------------------------- live MIDI */
+
+.workspace.noinfo {
+  grid-template-columns: 1fr;
+}
+.midiconnect {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  margin: 0.75rem 0 1.25rem;
+}
+.midiconnect label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.midiconnect label > span {
+  color: var(--muted);
+}
+.midiconnect .note {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.liveboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 0.75rem;
+  max-width: 72rem;
+}
+.liveboard.editing {
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  align-items: start;
+}
+.ctl {
+  display: grid;
+  gap: 0.6rem;
+}
+.liveboard.editing .ctl {
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+/* pads: big enough to hit with a finger on a tablet */
+.pad {
+  display: grid;
+  align-content: space-between;
+  gap: 0.5rem;
+  min-height: 7.5rem;
+  padding: 0.75rem;
+  text-align: left;
+  background: var(--surface);
+  touch-action: manipulation;
+  user-select: none;
+}
+.pad.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--surface);
+}
+.pad:disabled {
+  opacity: 1;
+  min-height: 4.5rem;
+}
+.ctl-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.ctl-msg {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+/* sliders stand upright, like faders */
+.fader {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  min-height: 7.5rem;
+  padding: 0.75rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.fader input[type="range"] {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  height: 11rem;
+  width: 2.5rem;
+  accent-color: var(--accent);
+  touch-action: none;
+}
+.liveboard.editing .fader input[type="range"] {
+  height: 5rem;
+}
+
+.ctl-edit {
+  display: grid;
+  gap: 0.4rem;
+}
+.ctl-edit label {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+.ctl-edit label > span {
+  color: var(--muted);
+}
+.ctl-edit label.check {
+  display: flex;
+  grid-template-columns: none;
+}
+.ctl-edit input:not([type="checkbox"]),
+.ctl-edit select {
+  width: 100%;
+}
+.ctl-edit .message {
+  margin: 0;
+  font-size: 0.85rem;
+}
+.ctl-tools {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+.ctl-tools button {
+  padding-left: 0;
+  padding-right: 0.6rem;
+}
+button.danger {
+  color: var(--error);
+}
+
+.livetools {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  max-width: 72rem;
+}
+.livetools .actions {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.filebutton {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 0.4rem 0.85rem;
+}
+.lastsent {
+  min-height: 1.5em;
+  color: var(--muted);
+  margin-top: 1.25rem;
+}
+
+/* ---------------------------------------------------------------- small screens */
+
+/* ---------------------------------------------------------------- arranger */
+
+.muted {
+  color: var(--muted);
+}
+button.small {
+  font-size: 0.85rem;
+  padding: 0.15rem 0.4rem;
+}
+.arrhead .songtitle input {
+  font-size: 1.15rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radius);
+  padding: 0.2rem 0.4rem;
+  min-width: 14rem;
+}
+.arrhead .songtitle input:hover,
+.arrhead .songtitle input:focus {
+  border-color: var(--line);
+  background: var(--surface);
+}
+.arrhead .source {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.arr {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: 1.25rem;
+  margin-top: 1rem;
+  align-items: start;
+}
+.library {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  position: sticky;
+  top: 0;
+}
+.library h3,
+.cellpanel h3,
+.preview h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.library .note {
+  margin: 0;
+}
+.blkgroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-start;
+}
+.blk {
+  display: grid;
+  width: 100%;
+  text-align: left;
+  gap: 0.05rem;
+  padding: 0.45rem 0.65rem;
+  cursor: grab;
+}
+.blk.picked {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.blk-name {
+  font-weight: 700;
+  margin: 0;
+}
+.blk-part,
+.blk-meta {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.blk-problem {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--error);
+}
+.arrmain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+.arrgrid-wrap {
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+.arrgrid {
+  display: grid;
+  gap: 0.35rem;
+  align-items: stretch;
+  min-width: min-content;
+}
+.sechead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.35rem;
+  border-bottom: 2px solid var(--line);
+}
+.sechead > input,
+.lanehead > input {
+  width: 100%;
+  font-weight: 700;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radius);
+  padding: 0.15rem 0.3rem;
+}
+.sechead > input:hover,
+.sechead > input:focus,
+.lanehead > input:hover,
+.lanehead > input:focus {
+  border-color: var(--line);
+  background: var(--surface);
+}
+.secbars {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.secbars input {
+  width: 4rem;
+  padding: 0.05rem 0.25rem;
+}
+.sectools {
+  display: flex;
+  gap: 0.1rem;
+}
+.sectools button,
+.lanehead button {
+  padding: 0.1rem 0.4rem;
+  font-size: 0.85rem;
+}
+.addsec {
+  display: flex;
+  align-items: flex-end;
+  padding: 0.35rem 0;
+}
+.lanehead {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+.cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.1rem;
+  min-height: 3.6rem;
+  text-align: left;
+  padding: 0.35rem 0.55rem;
+  border-style: dashed;
+  background: transparent;
+}
+.cell.filled {
+  border-style: solid;
+  background: var(--surface);
+}
+.cell.missing {
+  border-color: var(--error);
+}
+.cell.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.cell.dropping {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.cell-name {
+  font-weight: 700;
+}
+.cell-times,
+.cell-part,
+.cell-empty {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+.cell-bars {
+  display: block;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+.cell-bars span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+.cellpanel,
+.preview {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  align-items: flex-end;
+}
+.cellpanel header,
+.preview header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.cellpanel label,
+.cellpanel .times {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.9rem;
+}
+.cellpanel .times {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.35rem;
+}
+.cellpanel .times input {
+  width: 4rem;
+}
+.cellpanel .note {
+  width: 100%;
+  margin: 0;
+}
+.cellpanel .actions {
+  margin: 0;
+}
+.scorebar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  align-items: center;
+}
+.scorebar input {
+  width: 5rem;
+}
+.problems {
+  margin: 0;
+  padding: 0.5rem 0.75rem 0.5rem 1.75rem;
+  border-left: 3px solid var(--changed);
+  background: var(--changed-soft);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+.preview {
+  display: block;
+}
+/* Sheet music stays black on white, like paper, in both themes */
+.paper {
+  margin-top: 0.75rem;
+  background: #fff;
+  color: #000;
+  border-radius: var(--radius);
+  padding: 0.5rem 0;
+  min-height: 6rem;
+  overflow-x: auto;
+}
+
+@media (max-width: 900px) {
+  .arr {
+    grid-template-columns: 1fr;
+  }
+  .library {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .library h3,
+  .library .note {
+    width: 100%;
+  }
+  .blkgroup {
+    width: 12rem;
+  }
+}
+
+@media (max-width: 1100px) {
+  .workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+  }
+  .infopane {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    max-height: 9rem;
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .board-top,
+  .board-bottom {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .board-top .pedal-7 {
+    grid-column: auto;
+  }
+  .topbar,
+  .editor,
+  .bar {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .picker select {
+    min-width: 0;
+    max-width: calc(100vw - 7rem);
+  }
+  .source {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}

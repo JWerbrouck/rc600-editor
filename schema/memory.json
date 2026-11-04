@@ -1,0 +1,100 @@
+{
+  "_about": "Field map for the <mem> block of RC-600 MEMORYnnnX.RC0 files. Order of fields follows the Parameter Guide (rev 04). confidence: confirmed = proven by data, likely = guide order + consistent values, guess = needs a device test, state = recording state written by the device (do not edit).",
+  "_sources": ["docs/RC-600_Parameter_eng04_W.pdf", "DATA/ backup analysed with tools/stats.mjs"],
+
+  "NAME": {
+    "_note": "12 characters, each stored as an ASCII code, space padded.",
+    "A-L": { "name": "NAME", "type": "ascii", "confidence": "confirmed" }
+  },
+
+  "TRACK1-6": {
+    "A": { "name": "REVERSE", "values": ["OFF", "ON"], "confidence": "likely" },
+    "B": { "name": "1SHOT", "values": ["OFF", "ON"], "confidence": "likely" },
+    "C": { "name": "PAN", "range": [0, 100], "display": "L50..CENTER..R50 (50 = CENTER)", "confidence": "likely" },
+    "D": { "name": "PLAY LEVEL", "range": [0, 200], "default": 100, "confidence": "confirmed" },
+    "E": { "name": "START MODE", "values": ["IMMEDIATE", "FADE"], "confidence": "likely" },
+    "F": { "name": "STOP MODE", "values": ["IMMEDIATE", "FADE", "LOOP"], "confidence": "likely" },
+    "G": { "name": "DUB MODE", "values": ["OVERDUB", "REPLACE1", "REPLACE2"], "confidence": "likely" },
+    "H": { "name": "FX", "values": ["OFF", "ON"], "default": 1, "confidence": "likely" },
+    "I": { "name": "PLAY MODE", "values": ["MULTI", "SINGLE"], "confidence": "likely" },
+    "J": {
+      "name": "MEASURE",
+      "encoding": "0 = AUTO, 1 = FREE, 2..7 = six note lengths (2 = shortest), n >= 8 means (n - 7) measures (seen up to 600). Written together with R, S, T: AUTO R0 S0 T0, FREE R1 S0 T0, n measures R2 S=n T0, shortest note R2 S1 T1.",
+      "confidence": "confirmed",
+      "evidence": "J - 7 equals the recorded measure count S on 137 of 137 recorded tracks"
+    },
+    "K": { "name": "(unknown)", "confidence": "guess", "note": "0 in every memory and test so far" },
+    "L": { "name": "LOOP SYNC SW", "values": ["OFF", "ON"], "default": 1, "confidence": "confirmed", "evidence": "Round 2 test 1: ON -> OFF set L 1 -> 0" },
+    "M": { "name": "TEMPO SYNC SW", "values": ["OFF", "ON"], "default": 1, "confidence": "likely" },
+    "N": { "name": "TEMPO SYNC MODE", "values": ["PITCH", "XFADE"], "default": 1, "confidence": "confirmed", "evidence": "Round 2 test 3" },
+    "O": { "name": "TEMPO SYNC SPEED", "values": ["HALF", "NORMAL", "DOUBLE"], "default": 1, "confidence": "likely" },
+    "P": { "name": "BOUNCE IN", "values": ["OFF", "ON"], "confidence": "likely" },
+    "Q": {
+      "name": "INPUT",
+      "encoding": "bitmask: bit0 MIC1, bit1 MIC2, bit2 INST1-L, bit3 INST1-R, bit4 INST2-L, bit5 INST2-R, bit6 RHYTHM (127 = all on)",
+      "default": 127,
+      "confidence": "likely",
+      "evidence": "Test 4 (only MIC1) gave 41 = bits 0,3,5; test 5 (only RHYTHM) gave 104 = bits 3,5,6. Bits 3 and 5 (the R side of INST1/INST2) stayed on: with STEREO LINK on, the pedal only toggles the L bit of a pair."
+    },
+    "R": { "name": "measure state", "confidence": "state", "note": "Pedal sets it with MEASURE: 1 for FREE, 2 for fixed lengths (empty tracks). Varies 0-2 on recorded tracks." },
+    "S": { "name": "measure count", "confidence": "state", "note": "J - 7 for fixed lengths, also on empty tracks; 0 for FREE; 1 for a note length (test 7)" },
+    "T": { "name": "measure state", "confidence": "state", "note": "0 for FREE and whole measures; 1 for the shortest note length (test 7)" },
+    "U": { "name": "recorded tempo x 10", "confidence": "state" },
+    "V": { "name": "samples per measure at 44.1 kHz", "confidence": "state", "evidence": "= 44100 * 60 / (U/10) * beats, within rounding" },
+    "W": { "name": "has audio", "values": ["NO", "YES"], "confidence": "state" },
+    "X": { "name": "recorded length in samples", "confidence": "state", "evidence": "= S * V on 134 of 137 tracks" },
+    "Y": { "name": "LOOP SYNC MODE", "values": ["IMMEDIATE", "MEASURE", "LOOP LENGTH"], "default": 2, "confidence": "confirmed", "evidence": "Round 2 test 2: LOOP LENGTH -> IMMEDIATE set Y 2 -> 0. A setting, despite sitting after the recording state." }
+  },
+
+  "MASTER": {
+    "A": { "name": "TEMPO x 10", "range": [400, 3000], "default": 1200, "confidence": "likely", "note": "1200 = 120.0 BPM; tracks copy it into U when recorded" },
+    "B": { "name": "samples per measure", "confidence": "state" },
+    "C": { "name": "(unknown)", "confidence": "state" },
+    "D": { "name": "(unknown, measure-like 0..8)", "confidence": "state" }
+  },
+
+  "REC": {
+    "A": { "name": "REC ACTION", "values": ["REC->DUB", "REC->PLAY"], "confidence": "confirmed", "evidence": "Test 6: REC->PLAY (1) toggled to 0" },
+    "B": { "name": "QUANTIZE", "values": ["OFF", "MEASURE"], "confidence": "likely" },
+    "C": { "name": "AUTO REC SW", "values": ["OFF", "ON"], "confidence": "likely" },
+    "D": { "name": "AUTO REC SENS", "range": [1, 100], "default": 50, "confidence": "likely" },
+    "E": { "name": "BOUNCE SW", "values": ["OFF", "ON"], "confidence": "likely" },
+    "F": { "name": "BOUNCE TRACK", "encoding": "bitmask over tracks 1-6 (63 = all)", "confidence": "likely" }
+  },
+
+  "PLAY": {
+    "_note": "CURRENT TRACK from the guide is not stored here.",
+    "A": { "name": "S.TRK CHANGE", "values": ["IMMEDIATE", "LOOP END"], "confidence": "likely" },
+    "B": { "name": "FADE TIME IN", "encoding": "0..3 = four note lengths (0 = 1/16), 4..67 = 1..64 measures", "default": 5, "confidence": "confirmed", "evidence": "Round 1 test 8 (1MEAS = 4), round 2 test 5 (shortest = 0)" },
+    "C": { "name": "FADE TIME OUT", "encoding": "same as FADE TIME IN", "default": 5, "confidence": "confirmed", "evidence": "Round 2 test 6: FADE OUT set to 64MEAS gave C = 67" },
+    "D": { "name": "ALL START TRK", "encoding": "bitmask over tracks 1-6", "default": 63, "confidence": "likely" },
+    "E": { "name": "ALL STOP TRK", "encoding": "bitmask over tracks 1-6", "default": 63, "confidence": "likely" },
+    "F": { "name": "LOOP LENGTH", "encoding": "0 = AUTO, n = n measures", "confidence": "likely" },
+    "G": { "name": "SPEED CHANGE", "values": ["IMMEDIATE", "LOOP END"], "confidence": "likely" },
+    "H": { "name": "SYNC ADJUST", "values": ["BEAT", "MEASURE"], "default": 1, "confidence": "confirmed", "evidence": "Round 2 test 4: value 0 shows BEAT" }
+  },
+
+  "RHYTHM": {
+    "_note": "Guide lists 12 parameters; the file has 13.",
+    "A": { "name": "GENRE", "values": ["ACOUSTIC", "BALLAD", "BLUES", "JAZZ", "FUSION", "R&B", "SOUL", "FUNK", "POP", "SOFT ROCK", "ROCK", "ALT ROCK", "PUNK", "HEAVY ROCK", "METAL", "TRAD", "WORLD", "BALLRM", "ELCTRO", "GUIDE", "USER"], "default": 19, "confidence": "likely" },
+    "B": { "name": "PATTERN", "encoding": "index within genre (Rhythm Pattern List, p. 46)", "confidence": "likely" },
+    "C": { "name": "VARIATION", "values": ["A", "B", "C", "D"], "confidence": "likely" },
+    "D": { "name": "VAR.CHANGE", "values": ["MEASURE", "LOOP END"], "confidence": "likely", "evidence": "Test 13 set D 0 -> 1 (and M 0 -> 1)" },
+    "E": { "name": "KIT", "values": ["STUDIO", "LIVE", "LIGHT", "HEAVY", "ROCK", "METAL", "JAZZ", "BRUSH", "CAJON", "DRUM&BASS", "R&B", "DANCE", "TECHNO", "DANCE BEATS", "HIPHOP", "808+909"], "confidence": "likely" },
+    "F": { "name": "BEAT", "values": ["2/4", "3/4", "4/4", "5/4", "6/4", "7/4", "5/8", "6/8", "7/8", "8/8", "9/8", "10/8", "11/8", "12/8", "13/8", "14/8", "15/8"], "default": 2, "confidence": "confirmed", "evidence": "samples per measure match tempo x beats for 103 of 137 tracks exactly, the rest within 0.1 BPM rounding" },
+    "G": { "name": "FILL", "values": ["OFF", "ON"], "default": 1, "confidence": "confirmed", "evidence": "Test 14" },
+    "H": { "name": "INTRO REC", "values": ["OFF", "ON"], "confidence": "confirmed", "evidence": "Test 12" },
+    "I": { "name": "INTRO PLAY", "values": ["OFF", "ON"], "confidence": "confirmed", "evidence": "Round 2 test 7" },
+    "J": { "name": "ENDING", "values": ["OFF", "ON"], "confidence": "confirmed", "evidence": "Round 2 test 8" },
+    "K": { "name": "START TRIG", "values": ["LOOP START", "REC END", "BEFORE LOOP"], "confidence": "confirmed", "evidence": "Test 10: 0 -> 2" },
+    "L": { "name": "STOP TRIG", "values": ["OFF", "LOOP STOP", "REC END"], "default": 1, "confidence": "confirmed", "evidence": "Test 11: 1 -> 2" },
+    "M": { "name": "(unknown, 0..2)", "confidence": "guess", "note": "Changed with VAR.CHANGE in test 13" }
+  },
+
+  "_partial": {
+    "ASSIGN1-16": "A = SW (on/off), B = SOURCE index (test 15 set B = 15 for a CTL1 assign)",
+    "ifx/AA": "Input FX bank A, FX A: A = switch, C = FX TYPE index (test 16: 35 = DELAY)"
+  },
+
+  "_not_mapped_yet": ["ICTL*", "ECTL*", "ASSIGN1-16", "INPUT", "OUTPUT", "ROUTING", "MIXER", "EQ_*", "MASTER_FX", "FIXED_VALUE", "<ifx>", "<tfx>"]
+}
