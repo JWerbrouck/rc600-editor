@@ -82,20 +82,21 @@ function db(): Promise<IDBDatabase> {
   });
 }
 
-export async function rememberFolder(dir: FileSystemDirectoryHandle) {
+/** key: "song" (arranger) or "pedal" (the RC-600 drive). */
+export async function rememberFolder(dir: FileSystemDirectoryHandle, key = "song") {
   try {
     const d = await db();
-    d.transaction(STORE, "readwrite").objectStore(STORE).put(dir, "song");
+    d.transaction(STORE, "readwrite").objectStore(STORE).put(dir, key);
   } catch {
     // storage blocked: the folder just isn't remembered
   }
 }
 
-export async function rememberedFolder(): Promise<FileSystemDirectoryHandle | null> {
+export async function rememberedFolder(key = "song"): Promise<FileSystemDirectoryHandle | null> {
   try {
     const d = await db();
     return await new Promise((resolve) => {
-      const req = d.transaction(STORE).objectStore(STORE).get("song");
+      const req = d.transaction(STORE).objectStore(STORE).get(key);
       req.onsuccess = () => resolve((req.result as FileSystemDirectoryHandle) ?? null);
       req.onerror = () => resolve(null);
     });

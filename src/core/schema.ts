@@ -17,7 +17,17 @@ interface Base {
 
 export type Field =
   | (Base & { kind: "enum"; options: string[] })
-  | (Base & { kind: "range"; min: number; max: number; format?: (v: number) => string })
+  | (Base & {
+      kind: "range";
+      min: number;
+      max: number;
+      format?: (v: number) => string;
+      /** Shown and typed as stored value − offset, with a unit (e.g. delay time: stored ms + 11). */
+      offset?: number;
+      unit?: string;
+      /** Shown as stored value ÷ scale (tempo ×10 → 60.0). */
+      scale?: number;
+    })
   | (Base & { kind: "bitmask"; bits: string[]; groups?: { label: string; bits: [bit: number, short: string][] }[] })
   | (Base & { kind: "measure" })
   | (Base & { kind: "raw" });
@@ -98,7 +108,7 @@ const BEAT_QUARTERS = [2, 3, 4, 5, 6, 7, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7,
 // RHYTHM.F (beat) is handled with tempo, because it can't change once a track is recorded.
 export const RHYTHM_FIELDS: Field[] = [
   { key: "A", label: "Genre", kind: "enum", options: GENRES, confidence: "likely" },
-  { key: "B", label: "Pattern", kind: "range", min: 0, max: 99, confidence: "likely", format: (v) => `= ${v + 1} on the pedal`, hint: "Number within the genre (Parameter Guide p. 46)" },
+  { key: "B", label: "Pattern", kind: "range", min: 0, max: 99, confidence: "likely", format: (v) => String(v + 1), hint: "Number within the genre, as the pedal shows it (Parameter Guide p. 46)" },
   { key: "C", label: "Variation", kind: "enum", options: ["A", "B", "C", "D"], confidence: "likely" },
   { key: "E", label: "Kit", kind: "enum", options: KITS, confidence: "likely" },
   { key: "K", label: "Start", kind: "enum", options: ["Loop start", "Rec end", "Before loop"], confidence: "confirmed" },
@@ -163,7 +173,12 @@ export function displayValue(field: Field, v: number): string {
     case "enum":
       return field.options[v] ?? `? (${v})`;
     case "range":
-      return field.format ? field.format(v) : String(v);
+      if (field.format) return field.format(v);
+      if (field.offset !== undefined || field.scale) {
+        if (v < field.min && field.offset) return "synced to tempo";
+        return `${(v - (field.offset ?? 0)) / (field.scale ?? 1)}${field.unit ? ` ${field.unit}` : ""}`;
+      }
+      return String(v);
     case "bitmask": {
       const on = field.bits.filter((_, i) => v & (1 << i));
       return on.length === field.bits.length ? "All" : on.length ? on.join(", ") : "None";

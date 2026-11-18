@@ -15,12 +15,21 @@ export interface Store {
 export const MEMORY_COUNT = 99;
 export const memoryFile = (n: number, copy: "A" | "B") => `MEMORY${String(n).padStart(3, "0")}${copy}.RC0`;
 
+/** Changes key for the system settings (SYSTEM1/SYSTEM2), next to memories 1–99. */
+export const SYSTEM = 0;
+
+/** A file pair with A/B copies: a memory, or the system settings (number 0). */
 export class Memory {
   constructor(
     readonly number: number,
     private a: Rc0,
     private b: Rc0,
+    private files: { A: string; B: string } = { A: memoryFile(number, "A"), B: memoryFile(number, "B") },
   ) {}
+
+  fileName(copy: "A" | "B"): string {
+    return this.files[copy];
+  }
 
   /** The copy the pedal loads: the one with the higher write counter. */
   get current(): Rc0 {
@@ -47,10 +56,10 @@ export async function loadMemories(store: Store): Promise<Memory[]> {
   return memories;
 }
 
-/** System settings: SYSTEM1/SYSTEM2, the same two-copy scheme as memories. Read-only for now. */
-export async function loadSystem(store: Store): Promise<Rc0> {
+/** System settings: SYSTEM1/SYSTEM2, the same two-copy scheme as memories (SYSTEM1 in the A role). */
+export async function loadSystem(store: Store): Promise<Memory> {
   const [one, two] = await Promise.all([store.read("SYSTEM1.RC0"), store.read("SYSTEM2.RC0")]).then((t) => t.map((x) => new Rc0(x)));
-  return two.count > one.count ? two : one;
+  return new Memory(SYSTEM, one, two, { A: "SYSTEM1.RC0", B: "SYSTEM2.RC0" });
 }
 
 export function readName(doc: Rc0): string {
@@ -76,9 +85,17 @@ export const recordedMeasures = (doc: Rc0, track: number) => doc.get(`mem/TRACK$
 export class Changes {
   private edits = new Map<number, Map<Path, number>>();
 
-  constructor(private memories: Memory[]) {}
+  constructor(
+    private memories: Memory[],
+    private system?: Memory,
+  ) {}
 
+  /** n = 1–99 for memories, SYSTEM (0) for the system settings. */
   private mem(n: number): Memory {
+    if (n === SYSTEM) {
+      if (!this.system) throw new Error("System settings aren't loaded");
+      return this.system;
+    }
     return this.memories[n - 1];
   }
 
@@ -196,7 +213,7 @@ export class Changes {
     const doc = m.current.clone();
     for (const [p, v] of this.changesFor(n)) doc.set(p, v);
     doc.count = m.current.count + 1;
-    return { file: memoryFile(n, m.olderCopy), doc };
+    return { file: m.fileName(m.olderCopy), doc };
   }
 
   /** Write every changed memory. A memory's edits are cleared only after its file is written. */
@@ -212,4 +229,43 @@ export class Changes {
     }
     return written;
   }
+}
+
+// ---------------------------------------------------------------- restoring from a backup
+
+/**
+ * Settings that a restore from backup leaves alone:
+ *   SETUP.A          the memory the pedal starts on; it changes whenever you switch memory
+ *   MIXER.U/V        phones and master out, which follow the OUTPUT LEVEL knob
+ *   INPUT.A/B        phantom power: only ever changed on the pedal itself
+ */
+const RESTORE_SKIP = new Set(["sys/SETUP.A", "sys/MIXER.U", "sys/MIXER.V", "sys/INPUT.A", "sys/INPUT.B"]);
+
+/** Which values a restore covers: all system settings, and each memory's footswitch assignments. */
+export function isRestorable(n: number, path: Path): boolean {
+  if (n === SYSTEM) return path.startsWith("sys/") && !RESTORE_SKIP.has(path);
+  return /^mem\/(ICTL\d_PEDAL\d|ECTL_[A-Z0-9]+)\./.test(path);
+}
+
+/**
+ * Stage the backup's values wherever they differ from the pedal (within isRestorable).
+ * Returns the files that got changes (SYSTEM and/or memory numbers).
+ */
+export function stageRestore(changes: Changes, current: { system: Memory; memories: Memory[] }, backup: { system: Memory; memories: Memory[] }): number[] {
+  const touched = new Set<number>();
+  const pairs: [number, Rc0, Rc0][] = [
+    [SYSTEM, current.system.current, backup.system.current],
+    ...current.memories.map((m, i): [number, Rc0, Rc0] => [m.number, m.current, backup.memories[i].current]),
+  ];
+  for (const [n, now, then] of pairs) {
+    const root = n === SYSTEM ? "sys/" : "mem/";
+    for (const path of now.paths(root)) {
+      if (!isRestorable(n, path) || !then.has(path)) continue;
+      const v = then.get(path);
+      if (changes.value(n, path) === v) continue;
+      changes.set(n, path, v);
+      if (changes.isChanged(n, path)) touched.add(n);
+    }
+  }
+  return [...touched].sort((a, b) => a - b);
 }

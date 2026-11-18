@@ -5,6 +5,8 @@ pedal's own files over USB storage mode, so it needs no driver and no MIDI.
 
 ## Use it
 
+Needs Node.js 18 or newer (the current LTS from nodejs.org is fine); check with `node -v`.
+
 ```bash
 npm install
 npm run dev
@@ -23,11 +25,21 @@ To try it without the pedal, run `npm run sandbox` (copies `DATA/` to `sandbox/D
 - Track settings for all six tracks, in one table
 - Recording, playback and rhythm settings
 - Copy settings groups from one memory to many (e.g. "track settings to 10–20")
-- Write only changed memories, the way the pedal does: to the older of the A/B copies, with the
-  write counter raised
+- Effects: input and track FX, banks A–D and FX A–D: on/off, effect type, switch mode, what it
+  applies to, and each effect's settings where their values are mapped (see `src/core/effects.ts`)
+- ASSIGN 1–16 per memory: a source (footswitch, expression pedal, MIDI CC) controls a target
+  (track level, tempo, an effect, …) between a min and max
+- Footswitch assignments (pedals 1–9, modes 1–3), for the system or per memory: tap a pedal on
+  the board and pick its function
+- System settings: MIDI channels, memory extent, indicator colors, noise suppressors, USB levels
+  and EQs; the rest is shown as stored until round 3 of TESTS.md confirms it
+- Restore from a backup (System › Restore from a backup…): stages a backup's system settings and
+  footswitch assignments wherever they differ from the pedal; recordings, phantom power, the
+  start-up memory and the knob-driven phones/master levels are left alone
+- Write only changed files, the way the pedal does: to the older of the A/B copies (MEMORYnnnA/B,
+  SYSTEM1/2), with the write counter raised
 
-Settings whose meaning isn't confirmed yet are shown but not editable. Effects, ASSIGN, control
-and routing settings are kept exactly as they are.
+Settings whose meaning isn't known are hidden and kept exactly as they are, as are routing settings.
 
 ## Live MIDI
 
@@ -37,8 +49,11 @@ to the RC-600 over USB. The pedal must be in its normal mode, not USB storage mo
 - Program change switches memory (program 1 = memory 01); start/stop follow MIDI › SYNC START.
 - A CC does something once a memory has an ASSIGN with source "MIDI CC#" (1–31 or 64–95) and
   the target you want. The channel must match MIDI › RX CH › CTL.
-- **Edit board** to add, change, reorder or remove controls. The board is saved in the browser;
-  export it as JSON to use on another computer.
+- Several named boards; pick one at the top left. Boards are saved in this browser and stay after
+  a restart; export one as JSON to use it on another computer or tablet.
+- **Edit board**: add buttons, toggles and sliders, drag a control to move it, drag its corner to
+  resize it, tap it to set its label, color and message. The grid size (columns × rows) is set
+  per board, so one full-height button next to stacked buttons and tall sliders is possible.
 
 ## Arranger
 

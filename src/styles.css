@@ -17,8 +17,9 @@
   color-scheme: light;
 }
 
+/* Dark: follows the system unless the theme button chose light or dark */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #1b2026;
     --surface: #232930;
     --ink: #e3e7ea;
@@ -31,6 +32,19 @@
     --error: #ef8a80;
     color-scheme: dark;
   }
+}
+:root[data-theme="dark"] {
+  --bg: #1b2026;
+  --surface: #232930;
+  --ink: #e3e7ea;
+  --muted: #97a1ab;
+  --line: #363e47;
+  --accent: #7fb4d0;
+  --accent-soft: #24394a;
+  --changed: #e0a54a;
+  --changed-soft: #3a2f1e;
+  --error: #ef8a80;
+  color-scheme: dark;
 }
 
 * {
@@ -220,6 +234,10 @@ input.changed {
   grid-template-columns: 1fr 18rem;
   min-height: 0;
 }
+/* views without the info pane (they have their own side panel, or none) use the full width */
+.workspace.noinfo {
+  grid-template-columns: 1fr;
+}
 .editor {
   overflow-y: auto;
   padding: 1.25rem 2rem 2rem;
@@ -353,11 +371,86 @@ input.changed {
 }
 
 /* system overview */
+button.pedal {
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+button.pedal:hover {
+  border-color: var(--accent);
+}
+.pedal.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  background: var(--accent-soft);
+}
+.pedal.changed {
+  border-color: var(--changed);
+  background: var(--changed-soft);
+}
+.pedal.changed.selected {
+  box-shadow: 0 0 0 1px var(--changed);
+}
+.pedalpicker {
+  max-width: 62rem;
+  margin-top: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 0.75rem 1rem;
+}
+.pedalpicker header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pedalpicker h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.pedalpicker label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+.pedalpicker select {
+  max-width: 28rem;
+  font-size: 1.05rem;
+  padding: 0.35rem;
+}
+.changedmark {
+  color: var(--changed);
+  font-size: 0.85rem;
+  font-weight: 400;
+  margin-left: 0.35rem;
+}
+.sysgroup .row dd {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.sysgroup .note {
+  margin: 0.25rem 0 0.5rem;
+}
 .sysgrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
   gap: 0.75rem;
   align-items: start;
+}
+/* An opened section takes the full width and lays its settings out in columns, so the
+   closed ones around it keep their size instead of stretching to match */
+.sysgrid > details[open] {
+  grid-column: 1 / -1;
+}
+.sysgrid > details[open] dl {
+  columns: 22rem;
+  column-gap: 2rem;
+}
+.sysgrid > details[open] .row {
+  break-inside: avoid;
 }
 .sysgrid summary {
   cursor: pointer;
@@ -383,6 +476,15 @@ input.changed {
 }
 .status {
   color: var(--muted);
+  min-height: 2.9em;
+  display: flex;
+  align-items: center;
+}
+.status .message {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* ---------------------------------------------------------------- memory header */
@@ -706,167 +808,785 @@ dialog fieldset label {
 
 /* ---------------------------------------------------------------- live MIDI */
 
-.workspace.noinfo {
-  grid-template-columns: 1fr;
-}
-.midiconnect {
+/* The board fills the editor area; the grid rows share the height */
+.livewrap {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 1.25rem;
-  margin: 0.75rem 0 1.25rem;
-}
-.midiconnect label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.midiconnect label > span {
-  color: var(--muted);
-}
-.midiconnect .note {
-  flex-basis: 100%;
-  margin: 0;
-}
-
-.liveboard {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
-  gap: 0.75rem;
-  max-width: 72rem;
-}
-.liveboard.editing {
-  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-  align-items: start;
-}
-.ctl {
-  display: grid;
+  flex-direction: column;
+  height: 100%;
+  min-height: 24rem;
   gap: 0.6rem;
 }
-.liveboard.editing .ctl {
-  padding: 0.75rem;
+.livebar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  flex-wrap: wrap;
+}
+.boardpick select {
+  font-weight: 700;
+  font-size: 1.05rem;
+  max-width: 16rem;
+}
+.lastsent {
+  flex: 1;
+  min-width: 8rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.livemain {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+.livewrap.editing .livemain {
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+}
+.liveboard {
+  position: relative;
+  display: grid;
+  gap: 0.6rem;
+  min-height: 0;
+  height: 100%;
+}
+.liveside {
+  max-height: 100%;
+  position: static;
+}
+.emptynote {
+  grid-column: 1 / -1;
+  align-self: center;
+  text-align: center;
+}
+
+/* colors: --c is the control's color, --c-soft its tint */
+[data-color="blue"] { --c: #2c6a8a; --c-soft: #d6e5ee; }
+[data-color="teal"] { --c: #237a72; --c-soft: #d3ebe8; }
+[data-color="green"] { --c: #3f7a2e; --c-soft: #dcebd5; }
+[data-color="amber"] { --c: #a96400; --c-soft: #f6e7cf; }
+[data-color="red"] { --c: #a3322a; --c-soft: #f3dad7; }
+[data-color="purple"] { --c: #6b4c9a; --c-soft: #e5ddf1; }
+[data-color="grey"] { --c: #5d6771; --c-soft: #e1e5e8; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) [data-color] { --c-soft: color-mix(in srgb, var(--c) 30%, #232930); }
+  :root:not([data-theme="light"]) [data-color="blue"] { --c: #6aa8c8; }
+  :root:not([data-theme="light"]) [data-color="teal"] { --c: #5fbcb2; }
+  :root:not([data-theme="light"]) [data-color="green"] { --c: #86c46f; }
+  :root:not([data-theme="light"]) [data-color="amber"] { --c: #e0a54a; }
+  :root:not([data-theme="light"]) [data-color="red"] { --c: #ef8a80; }
+  :root:not([data-theme="light"]) [data-color="purple"] { --c: #b49be0; }
+  :root:not([data-theme="light"]) [data-color="grey"] { --c: #97a1ab; }
+}
+:root[data-theme="dark"] [data-color] { --c-soft: color-mix(in srgb, var(--c) 30%, #232930); }
+:root[data-theme="dark"] [data-color="blue"] { --c: #6aa8c8; }
+:root[data-theme="dark"] [data-color="teal"] { --c: #5fbcb2; }
+:root[data-theme="dark"] [data-color="green"] { --c: #86c46f; }
+:root[data-theme="dark"] [data-color="amber"] { --c: #e0a54a; }
+:root[data-theme="dark"] [data-color="red"] { --c: #ef8a80; }
+:root[data-theme="dark"] [data-color="purple"] { --c: #b49be0; }
+:root[data-theme="dark"] [data-color="grey"] { --c: #97a1ab; }
+
+.ctl {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  z-index: 1;
+}
+
+/* Pads: raised caps with the control's color as an LED strip. Dim at rest, lit with a glow
+   while pressed (button) or on (toggle). The cap sinks a little when pressed. */
+.pad {
+  --edge: color-mix(in srgb, var(--ink) 18%, var(--line));
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1.6rem 0.75rem 0.9rem;
+  border: 1px solid var(--edge);
+  border-bottom-width: 5px;
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--surface) 70%, white) inset;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.06s, border-bottom-width 0.06s, background 0.12s;
+}
+.pad .led {
+  position: absolute;
+  top: 0.7rem;
+  left: 50%;
+  translate: -50% 0;
+  width: min(60%, 7rem);
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--c);
+  opacity: 0.35;
+  transition: opacity 0.12s, box-shadow 0.12s;
+}
+.pad:hover .led {
+  opacity: 0.55;
+}
+.pad.on {
+  transform: translateY(3px);
+  border-bottom-width: 2px;
+  background: color-mix(in srgb, var(--c-soft) 60%, var(--surface));
+}
+.pad.on .led {
+  opacity: 1;
+  box-shadow: 0 0 0.6rem 0.1rem var(--c), 0 0 1.6rem 0.2rem color-mix(in srgb, var(--c) 45%, transparent);
+}
+/* a toggle that is on keeps its cap down and its light on */
+.ctl-toggle .pad.on {
+  background: var(--c-soft);
+}
+.ctl-label {
+  font-weight: 700;
+  font-size: clamp(1.05rem, 2.2vw, 1.7rem);
+  line-height: 1.15;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.ctl-msg {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* Faders: a broad recessed channel filled from the bottom in the control's color, a wide
+   cap with a grip line, and the value read out on top. --pos is 0–1. */
+.fader {
+  --edge: color-mix(in srgb, var(--ink) 18%, var(--line));
+  flex: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 0.6rem 0.8rem;
+  border: 1px solid var(--edge);
+  border-bottom-width: 5px;
+  border-radius: 16px;
+  background: var(--surface);
+  min-height: 0;
+}
+.fader-value {
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--c);
+  min-width: 3ch;
+  text-align: center;
+}
+.fader-channel {
+  --cap: 2.6rem;
+  position: relative;
+  width: min(100%, 5.5rem);
+  height: 100%;
+  min-height: 6rem;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg) 70%, var(--ink) 6%);
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 0.18);
+  touch-action: none;
+  cursor: ns-resize;
+}
+.fader-channel:focus-visible {
+  outline: 3px solid var(--c);
+  outline-offset: 3px;
+}
+.fader-fill {
+  position: absolute;
+  left: 0.55rem;
+  right: 0.55rem;
+  bottom: 0.55rem;
+  height: calc((100% - 1.1rem) * var(--pos));
+  border-radius: 7px;
+  background: var(--c);
+  opacity: 0.85;
+}
+.fader-cap {
+  position: absolute;
+  left: -0.4rem;
+  right: -0.4rem;
+  height: var(--cap);
+  bottom: calc((100% - var(--cap)) * var(--pos));
+  border-radius: 9px;
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-bottom-width: 4px;
+  box-shadow: 0 3px 8px rgb(0 0 0 / 0.22);
+}
+.fader-cap::after {
+  content: "";
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  top: calc(50% - 2px);
+  height: 4px;
+  border-radius: 2px;
+  background: var(--c);
+}
+.fader-channel.active .fader-cap {
+  border-bottom-width: 2px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.22), 0 0 0 3px color-mix(in srgb, var(--c) 35%, transparent);
+}
+.fader .ctl-label {
+  font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pad,
+  .pad .led {
+    transition: none;
+  }
+}
+
+/* editing: grid cells, selection, resize corner, and a preview of where a drag lands */
+.liveboard .cell {
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+}
+.livewrap.editing .ctl {
+  cursor: grab;
+  touch-action: none;
+}
+.livewrap.editing .pad,
+.livewrap.editing .fader {
+  pointer-events: none;
+}
+.ctl.selected .pad,
+.ctl.selected .fader {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+.resize {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-right: 4px solid var(--ink);
+  border-bottom: 4px solid var(--ink);
+  border-radius: 0 0 8px 0;
+  cursor: nwse-resize;
+  z-index: 2;
+}
+.ghost {
+  border: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border-radius: 10px;
+  z-index: 3;
+  pointer-events: none;
+}
+.ghost.blocked {
+  border-color: var(--error);
+  background: color-mix(in srgb, var(--error) 15%, transparent);
+}
+.lfield {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+.lfield > span:first-child {
+  color: var(--muted);
+}
+.gridsize input {
+  width: 4rem;
+}
+.swatches {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+.swatch {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--c);
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--line);
+}
+.swatch[aria-pressed="true"] {
+  box-shadow: 0 0 0 3px var(--ink);
+}
+.liveside .actions {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.liveside h3 {
+  margin: 0.6rem 0 0.2rem;
+}
+
+/* ---------------------------------------------------------------- small screens */
+
+/* ---------------------------------------------------------------- view change (swipe) */
+
+.editor.slide-left > * {
+  animation: slide-left 0.18s ease-out;
+}
+.editor.slide-right > * {
+  animation: slide-right 0.18s ease-out;
+}
+@keyframes slide-left {
+  from {
+    transform: translateX(2.5rem);
+    opacity: 0.4;
+  }
+}
+@keyframes slide-right {
+  from {
+    transform: translateX(-2.5rem);
+    opacity: 0.4;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .editor.slide-left > *,
+  .editor.slide-right > * {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------- switches */
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.15rem 0.5rem 0.15rem 0.2rem;
+  border-radius: 999px;
+  min-width: 4.4rem;
+  cursor: pointer;
+}
+.switch .knob {
+  position: relative;
+  width: 2.1rem;
+  height: 1.2rem;
+  border-radius: 999px;
+  background: var(--line);
+  transition: background 0.15s;
+}
+.switch .knob::after {
+  content: "";
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  transition: transform 0.15s;
+}
+.switch[aria-checked="true"] .knob {
+  background: var(--accent);
+}
+.switch[aria-checked="true"] .knob::after {
+  transform: translateX(0.9rem);
+}
+.switch .switchlabel {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.switch.changed {
+  border-color: var(--changed);
+  background: var(--changed-soft);
+}
+.themebtn {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+.moretoggle {
+  margin-top: 0.5rem;
+}
+
+/* ---------------------------------------------------------------- system: tiles + side panel */
+
+.editor {
+  touch-action: pan-y; /* horizontal swipes are ours: they move between menu items */
+  overflow-x: hidden; /* the slide-in animation must not add a sideways scrollbar */
+}
+.syslayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(24rem, 1.25fr);
+  gap: 1.25rem;
+  align-items: start;
+  margin-top: 1rem;
+}
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.6rem;
+}
+.tile {
+  position: relative;
+  display: grid;
+  gap: 0.15rem;
+  text-align: left;
+  padding: 0.7rem 0.85rem;
+  min-height: 4.2rem;
+  align-content: start;
+}
+.tile-title {
+  font-weight: 700;
+}
+.tile-sub {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.tile.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.tile.changed:not(.active) {
+  border-color: var(--changed);
+}
+/* in the corner, so a tile doesn't grow when it gets changes */
+.tile .changedmark {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.7rem;
+  margin: 0;
+}
+.sidepanel {
+  position: sticky;
+  top: 0;
+  max-height: calc(100vh - 9.5rem); /* scrolls by itself, so the page doesn't have to */
+  overflow-y: auto;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
+  padding: 0.9rem 1.1rem;
+}
+.sidepanel h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.15rem;
+}
+.sidepanel .note {
+  margin: 0 0 0.6rem;
+}
+.settings {
+  margin: 0;
+}
+.setting {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.15rem 0.75rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--line);
+}
+.setting dt {
+  font-weight: 700;
+}
+.setting dd {
+  margin: 0;
+  justify-self: end;
+}
+.setting .about {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.eqpick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0 0 0.6rem;
+}
+.eqpick button {
+  padding: 0.2rem 0.55rem;
+  font-size: 0.85rem;
+}
+.eqpick button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 700;
+}
+.eqpick button.changed {
+  border-color: var(--changed);
 }
 
-/* pads: big enough to hit with a finger on a tablet */
-.pad {
+/* menu lists: navigation inside a panel, visually distinct from the options they show */
+.menulist {
   display: grid;
-  align-content: space-between;
-  gap: 0.5rem;
-  min-height: 7.5rem;
-  padding: 0.75rem;
-  text-align: left;
-  background: var(--surface);
-  touch-action: manipulation;
-  user-select: none;
+  align-content: start;
+  gap: 0.1rem;
 }
-.pad.on {
+.menulist button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  color: var(--ink);
+}
+.menulist button::after {
+  content: "›";
+  color: var(--muted);
+}
+.menulist button:hover {
+  background: var(--bg);
+}
+.menulist button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--surface);
+  font-weight: 700;
+}
+.menulist button[aria-pressed="true"]::after {
+  color: var(--surface);
+}
+.menulist button.changed:not([aria-pressed="true"]) {
+  color: var(--changed);
+}
+.menuhead {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding: 0.6rem 0.6rem 0.2rem;
+}
+.menuhead:first-child {
+  padding-top: 0;
+}
+.subgrid {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+.subgrid .menulist {
+  border-right: 1px solid var(--line);
+  padding-right: 0.6rem;
+}
+.panelhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.panelhead h3 {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------- assign */
+
+.assigntiles {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.assigntile {
+  min-height: 5.2rem;
+}
+.assigntile.off .assignline {
+  color: var(--muted);
+}
+.assigntile .tile-sub {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+.assignline {
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- effects */
+
+.unitinput {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.unitinput input {
+  width: 6rem;
+}
+.unitinput.changed input {
+  border-color: var(--changed);
+  background: var(--changed-soft);
+}
+
+.fxtiles {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0.75rem;
+}
+.fxtile {
+  min-height: 5.5rem;
+}
+.fxtile .tile-title {
+  font-size: 1.1rem;
+}
+.fxstate {
+  justify-self: start;
+  font-size: 0.8rem;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.fxstate.on {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--surface);
 }
-.pad:disabled {
-  opacity: 1;
+.banksettings {
+  margin-top: 0.5rem;
+  max-width: 34rem;
+}
+.segmented button.changed {
+  color: var(--changed);
+}
+.panelsub {
+  margin: 1rem 0 0.25rem;
+  font-size: 1rem;
+}
+.typeabout {
+  margin: -0.2rem 0 0.4rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- footswitch picker */
+
+.pedallayout {
+  margin-top: 0.5rem;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.9fr);
+}
+/* in the info pane the function help takes the height it needs */
+.infopane .fnhelp {
+  height: auto;
+  margin: 0;
+  overflow: visible;
+}
+.boardcol .note {
+  margin-top: 0;
+}
+.boardcol .board {
+  max-width: none;
+}
+
+.board.external {
+  max-width: 62rem;
+  margin-top: 0.75rem;
+}
+.board.external h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+.board-ctl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+.board-ctl .pedal {
   min-height: 4.5rem;
 }
-.ctl-label {
-  font-size: 1.1rem;
+.pickergrid {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  gap: 1rem;
+  margin-top: 0.6rem;
+  align-items: start;
+}
+.fncats {
+  display: grid;
+  gap: 0.3rem;
+}
+.fncats button {
+  text-align: left;
+}
+.fncats button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
   font-weight: 700;
-  line-height: 1.2;
 }
-.ctl-msg {
-  font-size: 0.8rem;
-  opacity: 0.75;
+.trackpick {
+  margin-bottom: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
 }
-
-/* sliders stand upright, like faders */
-.fader {
+.trackpick button {
+  padding: 0.3rem 0.6rem;
+}
+.fnlist {
   display: grid;
-  justify-items: center;
-  gap: 0.5rem;
-  min-height: 7.5rem;
-  padding: 0.75rem 0.5rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
+  grid-template-columns: repeat(auto-fill, minmax(6.25rem, 1fr));
+  gap: 0.3rem;
 }
-.fader input[type="range"] {
-  writing-mode: vertical-lr;
-  direction: rtl;
-  height: 11rem;
-  width: 2.5rem;
-  accent-color: var(--accent);
-  touch-action: none;
+.fn {
+  text-align: left;
+  padding: 0.35rem 0.6rem;
 }
-.liveboard.editing .fader input[type="range"] {
-  height: 5rem;
+.fn.current {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 700;
 }
-
-.ctl-edit {
-  display: grid;
-  gap: 0.4rem;
+.fn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
-.ctl-edit label {
-  display: grid;
-  grid-template-columns: 7rem 1fr;
-  align-items: center;
-  gap: 0.5rem;
+/* Below the options and with a fixed height, so pointing at functions with longer or
+   shorter explanations never moves anything else */
+.fnhelp {
+  border-left: 3px solid var(--accent);
+  padding: 0.2rem 0 0.2rem 0.85rem;
+  margin: 0.9rem 0 0.4rem;
+  height: 8.5rem;
+  overflow-y: auto;
+}
+.fnhelp h4 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+}
+.fnhelp p {
+  margin: 0.4rem 0 0;
   font-size: 0.9rem;
 }
-.ctl-edit label > span {
-  color: var(--muted);
-}
-.ctl-edit label.check {
-  display: flex;
-  grid-template-columns: none;
-}
-.ctl-edit input:not([type="checkbox"]),
-.ctl-edit select {
-  width: 100%;
-}
-.ctl-edit .message {
+.actions3 {
+  display: grid;
+  gap: 0.2rem;
   margin: 0;
+}
+.actions3 div {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+}
+.actions3 dt {
+  color: var(--muted);
   font-size: 0.85rem;
 }
-.ctl-tools {
-  display: flex;
-  gap: 0.25rem;
-  flex-wrap: wrap;
-}
-.ctl-tools button {
-  padding-left: 0;
-  padding-right: 0.6rem;
-}
-button.danger {
-  color: var(--error);
+.actions3 dd {
+  margin: 0;
+  font-weight: 700;
 }
 
-.livetools {
-  display: grid;
-  gap: 0.5rem;
-  margin-top: 1.25rem;
-  max-width: 72rem;
+@media (max-width: 1100px) {
+  .syslayout,
+  .pickergrid {
+    grid-template-columns: 1fr;
+  }
+  .sidepanel,
+  .fnhelp {
+    position: static;
+  }
+  .fncats {
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  }
 }
-.livetools .actions {
-  justify-content: flex-start;
-  flex-wrap: wrap;
-}
-.filebutton {
-  color: var(--muted);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-  padding: 0.4rem 0.85rem;
-}
-.lastsent {
-  min-height: 1.5em;
-  color: var(--muted);
-  margin-top: 1.25rem;
-}
-
-/* ---------------------------------------------------------------- small screens */
 
 /* ---------------------------------------------------------------- arranger */
 
@@ -1164,7 +1884,7 @@ button.small {
   .infopane {
     border-left: 0;
     border-top: 1px solid var(--line);
-    max-height: 9rem;
+    height: 9rem; /* fixed, so explanations of different lengths don't resize the editor */
     padding: 0.75rem 1rem;
   }
 }
