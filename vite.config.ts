@@ -86,6 +86,8 @@ function demoSong(): Plugin {
 }
 
 export default defineConfig({
+  // Relative paths, so the built app works under any folder (e.g. GitHub Pages' /rc600-editor/)
+  base: "./",
   plugins: [sandbox(), demoSong()],
   server: { port: 5600 },
 });

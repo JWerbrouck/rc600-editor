@@ -1,6 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "rc600-editor", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 5600 }
+    { "name": "rc600-editor", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 5600 },
+    { "name": "rc600-built", "runtimeExecutable": "npx", "runtimeArgs": ["vite", "preview", "--port", "5601", "--base", "/rc600-editor/"], "port": 5601 }
   ]
 }

@@ -244,6 +244,7 @@ function render() {
         <nav class="views" aria-label="View">
           ${VIEWS.map(([id, label]) => `<button data-action="view" data-view="${id}" aria-pressed="${state.view === id}">${label}</button>`).join("")}
         </nav>
+        ${isInstallable() ? `<button class="quiet themebtn" data-action="install" title="Install as an app with its own window and icon">Install app</button>` : ""}
         <button class="quiet themebtn" data-action="theme" title="Color scheme: ${theme === "auto" ? "follows the system" : theme}">${theme === "auto" ? "◐ Auto" : theme === "dark" ? "● Dark" : "○ Light"}</button>
         <p class="source" title="Pedal files are read from and written to this folder">${filesOpen ? esc(state.store!.label) : own ? "" : "Pedal not connected"}</p>
       </header>
@@ -1203,6 +1204,8 @@ app.addEventListener("click", (e) => {
       state.allTrackSettings = !state.allTrackSettings;
       writePref("allTrackSettings", state.allTrackSettings ? "1" : "0");
       return render();
+    case "install":
+      return void install();
     case "theme":
       theme = theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto";
       writePref("theme", theme);
@@ -1338,4 +1341,26 @@ window.addEventListener("beforeunload", (e) => {
   if (state.changes?.size) e.preventDefault();
 });
 
+// Installable app: offline support in the built version (the dev server stays uncached), and
+// an "Install app" button in the top bar when the browser offers installing
+let installPrompt: (Event & { prompt(): Promise<void> }) | null = null;
+if (import.meta.env.PROD && "serviceWorker" in navigator) void navigator.serviceWorker.register("./sw.js");
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  installPrompt = e as typeof installPrompt;
+  render();
+});
+window.addEventListener("appinstalled", () => {
+  installPrompt = null;
+  render();
+});
+const isInstallable = () => installPrompt !== null;
+async function install() {
+  await installPrompt?.prompt();
+  installPrompt = null;
+  render();
+}
+
 render();
+
+
