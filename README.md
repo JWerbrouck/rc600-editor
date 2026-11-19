@@ -13,8 +13,9 @@ npm run dev
 ```
 
 Open http://localhost:5600 in Chrome or Edge. Every tab opens without the pedal; to edit memory,
-footswitch and system settings, put the RC-600 in USB storage mode and press **Open RC-600**. Edit, then **Write to RC-600**. The first write in a session copies every memory
-file to a backup folder you choose.
+footswitch and system settings, put the RC-600 in USB storage mode and press **Open RC-600**. Edit, then **Write to RC-600**. The first write in a session copies every pedal
+file into a new dated folder inside your backup folder. You choose that folder once; the editor
+remembers it (the write dialog has **Use another backup folder…** to change it).
 
 To try it without the pedal, run `npm run sandbox` (copies `DATA/` to `sandbox/DATA`) and use
 **Use the sandbox copy**. Run it again to reset the sandbox.

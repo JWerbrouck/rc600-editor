@@ -1018,22 +1018,31 @@ function reviewDialog() {
     return `<li><strong>${title}</strong><ul>${lines.map((l) => `<li>${l}</li>`).join("")}</ul></li>`;
   });
   const needsBackup = state.store instanceof DirectoryStore && !state.backupFolder;
+  const known = needsBackup && backupDir;
   const d = openDialog(`
     <form method="dialog" class="review">
       <h2>Write to ${esc(state.store!.label)}</h2>
       <ol class="changelist">${items.join("")}</ol>
       ${
-        needsBackup
-          ? `<p>Before the first write, the editor copies every memory file to a backup folder you choose. Pick a folder on this computer, not on the pedal.</p>`
-          : state.backupFolder
-            ? `<p>Backup from this session: ${esc(state.backupFolder)}</p>`
-            : ""
+        known
+          ? `<p>Before the first write, the editor backs up every pedal file to a new dated folder in “${esc(backupDir!.name)}”.</p>`
+          : needsBackup
+            ? `<p>Before the first write, the editor copies every pedal file to a backup folder you choose. Pick a folder on this computer, not on the pedal; it's remembered for next time.</p>`
+            : state.backupFolder
+              ? `<p>Backup from this session: ${esc(state.backupFolder)}</p>`
+              : ""
       }
       <div class="actions">
         <button value="cancel" class="quiet">Cancel</button>
-        <button value="write" class="primary">${needsBackup ? "Choose backup folder and write" : "Write"}</button>
+        ${known ? `<button value="change" class="quiet">Use another backup folder…</button>` : ""}
+        <button value="write" class="primary">${needsBackup && !known ? "Choose backup folder and write" : "Write"}</button>
       </div>
     </form>`);
+  d.querySelector<HTMLButtonElement>("[value=change]")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    d.close();
+    void write(true, true);
+  });
   d.querySelector<HTMLButtonElement>("[value=write]")!.addEventListener("click", (e) => {
     e.preventDefault();
     d.close();
@@ -1041,20 +1050,40 @@ function reviewDialog() {
   });
 }
 
-async function write(needsBackup: boolean) {
+/** The backup folder chosen last time, remembered by the browser (IndexedDB); undefined until looked up. */
+let backupDir: FileSystemDirectoryHandle | null | undefined;
+void rememberedFolder("backup").then((d) => (backupDir = d));
+
+/** The folder to back up into: the remembered one if it's still allowed, else one picked now (and remembered). */
+async function backupTarget(pickNew: boolean): Promise<FileSystemDirectoryHandle | null> {
+  if (!pickNew && backupDir) {
+    try {
+      if (await regainAccess(backupDir)) return backupDir;
+    } catch {
+      // folder gone or no longer allowed: pick one below
+    }
+  }
+  try {
+    const picked = await window.showDirectoryPicker({ id: "rc600-backup", mode: "readwrite" });
+    await rememberFolder(picked, "backup");
+    backupDir = picked;
+    return picked;
+  } catch {
+    return null; // picker cancelled
+  }
+}
+
+async function write(needsBackup: boolean, pickNew = false) {
   const store = state.store!;
   if (needsBackup && store instanceof DirectoryStore) {
-    let target: FileSystemDirectoryHandle;
+    const target = await backupTarget(pickNew);
+    if (!target) return say("Nothing written: no backup folder was chosen.");
     try {
-      target = await window.showDirectoryPicker({ id: "rc600-backup", mode: "readwrite" });
-    } catch {
-      return say("Nothing written: no backup folder was chosen.");
-    }
-    try {
-      say("Backing up all memory files…");
-      state.backupFolder = await store.backupTo(target);
+      say(`Backing up all pedal files to “${target.name}”…`);
+      state.backupFolder = `${target.name}/${await store.backupTo(target)}`;
     } catch (e) {
-      return say(`Nothing written: the backup failed (${(e as Error).message}).`, "error");
+      if (target === backupDir) backupDir = null; // e.g. the drive with that folder isn't connected: ask next time
+      return say(`Nothing written: the backup to “${target.name}” failed (${(e as Error).message}). Press Write again to choose a backup folder.`, "error");
     }
   }
   try {
